@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des playlists de l'utilisateur</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>🎵 Recherche d'une playlist Spotify</h1>
+    <form method="POST">
+        <label for="playlist_name">Nom de la playlist :</label>
+        <input type="text" id="playlist_name" name="playlist_name" required>
+        <button type="submit">🔍 Rechercher</button>
+    </form>
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+    {% if playlist_info %}
+        <div class="playlist-info">
+            <h2>{{ playlist_info.name }}</h2>
+            <p><strong>Nombre de morceaux :</strong> {{ playlist_info.tracks }}</p>
+            <p><strong>Durée totale :</strong> {{ playlist_info.duration }}</p>
+            <p><strong>Propriétaire :</strong> {{ playlist_info.owner }}</p>
+            
+            {% if playlist_info.image_url %}
+                <img src="{{ playlist_info.image_url }}" alt="Pochette de la playlist">
+            {% else %}
+                <p>🚫 Aucune image disponible</p>
+            {% endif %}
+        </div>
+    {% else %}
+        <h2>📜 Mes Playlists</h2>
+        <div class="playlists-list">
+            {% for playlist in playlists %}
+                <div class="playlist">
+                    <h3>{{ playlist.name }}</h3>
+                    <p><strong>Nombre de morceaux :</strong> {{ playlist.tracks }}</p>
+                    <p><strong>Durée totale :</strong> {{ playlist.duration }}</p>
+                    <p><strong>Propriétaire :</strong> {{ playlist.owner }}</p>
+                    
+                    {% if playlist.image_url %}
+                        <img src="{{ playlist.image_url }}" alt="Pochette de la playlist">
+                    {% else %}
+                        <p>🚫 Aucune image disponible</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</body>
+</html>

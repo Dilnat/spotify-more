@@ -1,0 +1,55 @@
+# Environnements virtuels
+venv/
+.env
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+*.log
+
+# Dépendances
+Pipfile
+Pipfile.lock
+poetry.lock
+
+# Fichiers de configuration
+instance/
+config.py
+*.sqlite3
+db.sqlite3
+migrations/
+
+# Cache et compilations Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Logs et fichiers temporaires
+*.log
+*.out
+*.pid
+*.swp
+*.swo
+*.bak
+
+# IDE et éditeurs
+.vscode/
+.idea/
+*.iml
+
+# Jupyter Notebooks
+.ipynb_checkpoints
+
+# Docker
+docker-compose.override.yml
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+
+# Fichiers de cache
+.cache

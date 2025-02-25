@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choisir des playlists Spotify</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script>
+        function togglePlaylistNameField() {
+            let operation = document.querySelector('input[name="operation"]:checked');
+            let nameField = document.getElementById("playlist_name_group");
+
+            if (operation && operation.value === "delete") {
+                nameField.style.display = "none";
+            } else {
+                nameField.style.display = "block";
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>🎵 Sélectionnez vos playlists Spotify</h1>
+
+    {% if playlists %}
+        <form method="POST" action="{{ url_for('choose_playlists_profil.process_playlists') }}">
+            <div class="playlist-container">
+                {% for playlist in playlists %}
+                    <div class="playlist-item">
+                        <input type="checkbox" id="playlist_{{ playlist.id }}" name="playlist_ids" value="{{ playlist.id }}">
+                        <label for="playlist_{{ playlist.id }}">
+                            {% if playlist.images %}
+                                <img src="{{ playlist.images[0].url }}" alt="Image de {{ playlist.name }}">
+                            {% else %}
+                                <p>🚫 Pas d'image</p>
+                            {% endif %}
+                            <p>{{ playlist.name }} ({{ playlist.tracks.total }} titres)</p>
+                        </label>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Champ pour entrer le nom de la nouvelle playlist -->
+            <div id="playlist_name_group">
+                <label for="playlist_name">Nom de la nouvelle playlist :</label>
+                <input type="text" id="playlist_name" name="playlist_name" placeholder="Ma nouvelle playlist">
+            </div>
+
+            <!-- Boutons d'action -->
+            <input type="radio" name="operation" value="intersect" id="intersect" checked onchange="togglePlaylistNameField()">
+            <label for="intersect">🎯 Intersect</label>
+
+            <input type="radio" name="operation" value="delete" id="delete" onchange="togglePlaylistNameField()">
+            <label for="delete">🗑️ Supprimer</label>
+
+            <button type="submit">Exécuter</button>
+        </form>
+    {% else %}
+        <p>❌ Aucune playlist trouvée.</p>
+    {% endif %}
+</body>
+</html>

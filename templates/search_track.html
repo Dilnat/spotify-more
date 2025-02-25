@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informations de la musique</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>🎵 Recherche d'une musique Spotify</h1>
+    <form method="POST">
+        <label for="track_name">Nom du morceau :</label>
+        <input type="text" id="track_name" name="track_name" required>
+        <button type="submit">🔍 Rechercher</button>
+    </form>
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+    {% if track_info %}
+        <div class="track-info">
+            <h2>{{ track_info.name }}</h2>
+            <p><strong>Artiste :</strong> {{ track_info.artist }}</p>
+            <p><strong>Album :</strong> {{ track_info.album }}</p>
+            <p><strong>Date de sortie :</strong> {{ track_info.release_date }}</p>
+            <p><strong>Durée :</strong> {{ track_info.duration }}</p>
+            <p><strong>Explicite :</strong> {{ track_info.explicit }}</p>
+            <p><strong>Popularité :</strong> {{ track_info.popularity }}</p>
+            
+            <img src="{{ track_info.image_url }}" alt="Pochette de l'album">
+            
+            {% if track_info.preview_url %}
+                <p>🎧 Extrait audio :</p>
+                <audio controls>
+                    <source src="{{ track_info.preview_url }}" type="audio/mpeg">
+                    Votre navigateur ne supporte pas l'audio.
+                </audio>
+            {% else %}
+                <p>❌ Aucun extrait disponible.</p>
+            {% endif %}
+        </div>
+    {% endif %}
+</body>
+</html>
