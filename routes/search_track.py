@@ -1,5 +1,7 @@
 from flask import Blueprint, render_template, request
-from config.spotify import sp
+from config.spotify import sp, sp_oauth
+from utils import get_track_features
+import pandas as pd
 search_track = Blueprint("search_track", __name__)
 
 
@@ -7,7 +9,13 @@ search_track = Blueprint("search_track", __name__)
 def index():
     track_info = None
     error = None
+    track_id = "3n3Ppam7vgaVa1iaRUc9Lp"  # Example: Stairway to Heaven
 
+    try:
+        features = sp_oauth.audio_features(track_id)
+        print(features)
+    except Exception as e:
+        print(f"Error fetching track features: {e}")
     if request.method == "POST":
         track_name = request.form["track_name"].strip()
 
@@ -25,7 +33,8 @@ def index():
                     "explicit": "🔞 Oui" if track["explicit"] else "✅ Non",
                     "popularity": f"{track['popularity']}/100",
                     "image_url": track["album"]["images"][0]["url"],
-                    "preview_url": track["preview_url"]
+                    "preview_url": track["preview_url"],
+                    "id": track["id"]
                 }
             else:
                 error = "❌ Aucun résultat trouvé pour ce titre."
@@ -33,3 +42,5 @@ def index():
             error = "❌ Impossible de récupérer les informations. Vérifie le nom du morceau."
 
     return render_template("search_track.html", track_info=track_info, error=error)
+
+

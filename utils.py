@@ -139,3 +139,85 @@ def format_duration(ms):
         return f"{hours} h {minutes % 60} min {seconds % 60} sec"
     else:
         return f"{minutes} min {seconds % 60} sec"
+    
+def display_playlists_terminal(playlists):
+    """Affiche une liste de playlists Spotify dans le terminal."""
+    
+    if not playlists or "items" not in playlists:
+        print("🚫 Aucune playlist trouvée.")
+        return
+    
+    print("\n🎵 **Liste des playlists Spotify :**\n")
+    print("=" * 60)
+
+    for idx, playlist in enumerate(playlists["items"], start=1):
+        name = playlist["name"]
+        track_count = playlist["tracks"]["total"]
+        playlist_url = playlist["external_urls"]["spotify"]
+
+        print(f"{idx:>2}. 📂 {name}")
+        print(f"    🔢 Nombre de morceaux : {track_count}")
+        print(f"    🔗 Lien : {playlist_url}")
+        print("=" * 60)
+    
+    print("\n✅ **Affichage terminé !**")
+
+def display_playlists_ids_terminal(playlists_ids):
+    """Affiche une liste des id des playlists Spotify dans le terminal."""
+    
+    if not playlists_ids:
+        print("🚫 Aucune playlist trouvée.")
+        return
+    
+    print("\n🎵 **Liste des id des playlists Spotify :**\n")
+    print("=" * 60)
+
+    for idx, id in enumerate(playlists_ids, start=1):
+        print(f"{idx} : 📂 {id}")
+    
+    print("\n✅ **Affichage terminé !**")
+
+
+def display_playlists_names_terminal(playlists_names):
+    """Affiche une liste des id des playlists Spotify dans le terminal."""
+    
+    if not playlists_names:
+        print("🚫 Aucune playlist trouvée.")
+        return
+    
+    print("\n🎵 **Liste des noms des playlists Spotify :**\n")
+    print("=" * 60)
+
+    for idx, name in enumerate(playlists_names, start=1):
+        print(f"{idx} : 📂 {name}")
+    
+    print("\n✅ **Affichage terminé !**")
+
+
+
+def get_tracks_from_playlists(sp, playlists):
+    track_sets = []
+    for playlist_id in playlists:
+        tracks = get_playlist_tracks(sp, playlist_id)
+        track_sets.append(set(track["id"] for track in tracks))
+    return track_sets
+
+def get_track_features(sp, track_id):
+    try:
+        features = sp.audio_features(track_id)
+        if features and features[0]:  # Check if features exist
+            return {
+                "danceability": features[0]["danceability"],
+                "energy": features[0]["energy"],
+                "valence": features[0]["valence"],
+                "tempo": features[0]["tempo"],
+                "acousticness": features[0]["acousticness"],
+                "instrumentalness": features[0]["instrumentalness"],
+                "loudness": features[0]["loudness"]
+            }
+        else:
+            print(f"Warning: No audio features found for track {track_id}")
+            return None
+    except Exception as e:
+        print("Error fetching track features:", e)
+        return None

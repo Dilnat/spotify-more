@@ -16,6 +16,47 @@
                 nameField.style.display = "block";
             }
         }
+        let selected_playlists = [];
+        function toggleSelectedPlaylists(id) {
+            let index = selected_playlists.indexOf(id);
+
+            if (index > -1) {
+                // Si l'ID est déjà présent, on l'enlève
+                selected_playlists.splice(index, 1);
+            } else {
+                // Sinon, on l'ajoute
+                selected_playlists.push(id);
+            }
+
+            console.log("📌 Playlists sélectionnées :", selected_playlists);
+            // ✅ Stocker en sessionStorage pour passer au backend
+            sessionStorage.setItem("selected_playlists", JSON.stringify(selected_playlists));
+
+            sendSelectedPlaylists()
+        }
+
+        function sendSelectedPlaylists() {
+            let selected = JSON.parse(sessionStorage.getItem("selected_playlists")) || [];
+
+            fetch("/save_selected_playlists", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ playlists: selected })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("✅ Réponse JSON du serveur :", data);
+
+                if (data.error) {
+                    console.error("❌ Erreur serveur :", data.error);
+                    alert("Erreur : " + data.error);
+                }
+            })
+            .catch(error => console.error("❌ Erreur réseau ou JSON invalide :", error));
+        }
+
     </script>
 </head>
 <body>
@@ -26,7 +67,8 @@
             <div class="playlist-container">
                 {% for playlist in playlists %}
                     <div class="playlist-item">
-                        <input type="checkbox" id="playlist_{{ playlist.id }}" name="playlist_ids" value="{{ playlist.id }}">
+                        <input type="checkbox" id="playlist_{{ playlist.id }}" name="playlist_ids" value="{{ playlist.id }}" 
+                            onchange="toggleSelectedPlaylists('{{ playlist.id }}')">
                         <label for="playlist_{{ playlist.id }}">
                             {% if playlist.images %}
                                 <img src="{{ playlist.images[0].url }}" alt="Image de {{ playlist.name }}">
@@ -52,10 +94,27 @@
             <input type="radio" name="operation" value="delete" id="delete" onchange="togglePlaylistNameField()">
             <label for="delete">🗑️ Supprimer</label>
 
+            <input type="radio" name="operation" value="minus" id="minus" onchange="togglePlaylistNameField()">
+            <label for="minus">Minus</label>
+
             <button type="submit">Exécuter</button>
         </form>
     {% else %}
         <p>❌ Aucune playlist trouvée.</p>
     {% endif %}
+
+    <h2>🎵 Sélectionnez les playlists dans l'ordre</h2>
+    <p>Entrez les numéros des playlists séparés par des virgules (ex: "1,3,2").</p>
+
+    <form method="POST">
+        <ul>
+            {% for playlist in playlists %}
+                <li>{{ loop.index }}. 📂 {{ playlist["name"] }}</li>
+            {% endfor %}
+        </ul>
+
+        <input type="text" name="selected_playlists" placeholder="Ex: 1,3,2">
+        <button type="submit">✅ Valider l'ordre</button>
+    </form>
 </body>
 </html>

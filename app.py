@@ -2,6 +2,8 @@ from flask import Flask
 from routes.search_track import search_track
 from routes.search_playlists_profil import search_playlists_profil
 from routes.choose_playlists_profil import choose_playlists_profil
+from routes.home import home;
+from routes.profil import profil;
 from config.spotify import sp 
 import secrets
 
@@ -22,6 +24,8 @@ def get_track_image(track_id):
 app.register_blueprint(search_track)
 app.register_blueprint(search_playlists_profil)
 app.register_blueprint(choose_playlists_profil)
+app.register_blueprint(home)
+app.register_blueprint(profil)
 
 # @app.route("/intersection", methods=["GET", "POST"])
 # def intersection():
