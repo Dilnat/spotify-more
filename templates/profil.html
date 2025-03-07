@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil utilisateur</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='profil.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <a href="/">
+        <img class="go-back" src="{{ url_for('static', filename='images/go_back.png') }}" alt="Retour en arrière">
+    </a>
+    <div class="div-profile gap">
+        {% if user_info.image_url %}
+            <img class="profile-img" src="{{ user_info.image_url }}" alt="Photo de profil">
+        {% endif %}
+        <a href="{{ user_info.profile_url }}" target="_blank">
+            <img class="spotify-logo" src="{{ url_for('static', filename='images/spotify_logo.png') }}" alt="Logo de spotify">
+        </a>
+    </div>
+
+    <div class="div-profile">
+        <p><strong>Nom :</strong> {{ user_info.display_name }}</p>
+    </div>
+    <div class="div-profile">
+        <p><strong>Abonnés :</strong> {{ user_info.followers }}</p>
+    </div>
+
+    <form method="POST" action="{{ url_for('profil.update_top_tracks') }}">
+        <input type="number" id="number_tracks" name="number_tracks" placeholder="10..." min="1" max="50"
+            value="{{ selected_number_tracks or 10 }}">
+        <select id="time_range">
+            <option value="short_term" {% if selected_time_range == "short_term" %}selected{% endif %}>Courte période</option>
+            <option value="medium_term" {% if selected_time_range == "medium_term" %}selected{% endif %}>Normal période</option>
+            <option value="long_term" {% if selected_time_range == "long_term" %}selected{% endif %}>Longue période</option>
+        </select>
+        <button type="submit">Exécuter</button>
+    </form>
+    {% if top_tracks %}
+    <div class="track-container">
+        {% for track in top_tracks %}
+            <div class="track-card">
+                <img src="{{ track.image_url }}" alt="Album cover" class="track-img">
+                <div class="track-info">
+                    <h3>{{ track.name }}</h3>
+                    <p class="artist-name">{{ track.artist }}</p>
+                    
+                    <div class="track-actions">
+                        <a href="{{ track.spotify_url }}" target="_blank" class="spotify-link">🔗 Écouter sur Spotify</a>
+                        
+                        {% if track.preview_url %}
+                            <audio controls>
+                                <source src="{{ track.preview_url }}" type="audio/mpeg">
+                                Votre navigateur ne supporte pas l'audio.
+                            </audio>
+                        {% else %}
+                            <p class="no-preview">❌ Pas d'extrait disponible</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    
+    {% else %}
+        <p>❌ Aucune donnée disponible</p>
+    {% endif %}
+</body>
+</html>

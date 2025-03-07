@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <a href="/profil">
+        <img class="profile-img" src="{{ user_info.image_url }}" alt="Photo de profil">
+    </a>
+    <a href="{{ user_info.profile_url }}" target="_blank">
+        <img class="spotify-logo" src="{{ url_for('static', filename='images/spotify_logo.png') }}" alt="Logo de spotify">
+    </a>
+</body>
+</html>
